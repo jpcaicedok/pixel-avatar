@@ -16,7 +16,11 @@
     p { margin: 0 0 20px; color: var(--suave); }
     label { display: block; margin-bottom: 4px; font-weight: 600; }
     input, button { width: 100%; min-height: 44px; font: inherit; border-radius: 8px; }
-    input { padding: 8px 12px; background: transparent; color: inherit; border: 1px solid var(--borde); }
+    input, select { padding: 8px 12px; background: transparent; color: inherit; border: 1px solid var(--borde); }
+    select { width: 100%; min-height: 44px; font: inherit; border-radius: 8px; }
+    option { color: #1c1c1e; background: #fff; }
+    .campo { margin-bottom: 12px; }
+    .botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     #vista { margin: 20px auto; width: min(100%, 256px); aspect-ratio: 1; border-radius: 8px; overflow: hidden; }
     #vista svg { display: block; width: 100%; height: 100%; }
     button { cursor: pointer; border: 0; background: var(--acento); color: var(--sobre-acento); font-weight: 600; }
@@ -27,15 +31,28 @@
   <main>
     <h1>Pixel Avatar</h1>
     <p>Escribe un texto y obtén siempre el mismo avatar. Todo ocurre en tu navegador.</p>
-    <label for="texto">Texto</label>
-    <input id="texto" value="Pixel" maxlength="100" autocomplete="off">
+    <div class="campo">
+      <label for="texto">Texto</label>
+      <input id="texto" value="Pixel" maxlength="100" autocomplete="off">
+    </div>
+    <label for="tamano">Cuadrícula</label>
+    <select id="tamano">
+      <option value="5">5 × 5</option>
+      <option value="8" selected>8 × 8</option>
+      <option value="12">12 × 12</option>
+      <option value="16">16 × 16</option>
+    </select>
     <div id="vista" role="img" aria-label="Avatar generado"></div>
-    <button id="svg" type="button">Descargar SVG</button>
+    <div class="botones">
+      <button id="svg" type="button">Descargar SVG</button>
+      <button id="png" type="button">Descargar PNG</button>
+    </div>
   </main>
   <script src="avatar.js"></script>
   <script>
     const campo = document.getElementById("texto");
     const vista = document.getElementById("vista");
+    const selector = document.getElementById("tamano");
     let svgActual = "";
 
     function nombreArchivo(extension) {
@@ -51,7 +68,7 @@
     }
 
     function actualizar() {
-      svgActual = PixelAvatar.generarSVG(PixelAvatar.generarAvatar(campo.value), 256);
+      svgActual = PixelAvatar.generarSVG(PixelAvatar.generarAvatar(campo.value, Number(selector.value)), 512);
       vista.innerHTML = svgActual;
     }
 
@@ -61,7 +78,21 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
 
+    document.getElementById("png").addEventListener("click", () => {
+      const url = URL.createObjectURL(new Blob([svgActual], { type: "image/svg+xml" }));
+      const imagen = new Image();
+      imagen.onload = () => {
+        const lienzo = document.createElement("canvas");
+        lienzo.width = lienzo.height = 512;
+        lienzo.getContext("2d").drawImage(imagen, 0, 0, 512, 512);
+        URL.revokeObjectURL(url);
+        descargar(lienzo.toDataURL("image/png"), nombreArchivo("png"));
+      };
+      imagen.src = url;
+    });
+
     campo.addEventListener("input", actualizar);
+    selector.addEventListener("change", actualizar);
     actualizar();
   </script>
 </body>

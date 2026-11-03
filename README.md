@@ -1,10 +1,10 @@
 # Pixel Avatar
 
-Genera avatares pixelados a partir de cualquier texto y los descarga como SVG. El mismo texto produce siempre el mismo avatar. No usa servidor ni librerías externas.
+Genera avatares pixelados a partir de cualquier texto y los descarga como SVG o PNG. El mismo texto produce siempre el mismo avatar. No usa servidor ni librerías externas.
 
 ## Uso
 
-Abre `index.html` en el navegador, escribe un texto y pulsa **Descargar SVG**.
+Abre `index.html` en el navegador, escribe un texto, elige la cuadrícula y pulsa **Descargar SVG** o **Descargar PNG**. El PNG mide 512 × 512 píxeles.
 
 También puedes usar el generador desde tu propio código:
 
